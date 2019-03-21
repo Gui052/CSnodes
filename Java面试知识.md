@@ -23,7 +23,7 @@
 
 ### 4. ==和equals有什么区别
 
-`==` 用来判断变量之间的值是否相等。如果是基本数据类型，就比较值，如果是引用类型就比较地址。
+`==` 用来判断变量之间是否相等。如果是基本数据类型，就比较值，如果是引用类型就比较地址。
 
 `equals` 比较的是对象的某些特征是否一样。实际上就是调用对象的equals方法。所有类都是继承Object类，而Object类中默认的equal方法用的就是`==`，所以如果不重写equal方法，就按照`==`的判断方式进行判断。
 
@@ -41,38 +41,47 @@ StringBuilder是线程不安全的，效率高，StringBuffer是线程安全的�
 
 常用的集合类有一下几种：
 
-1. List结构的集合类：ArrayList类，LinkedList类，Vector类，Stack类
+1. List结构的集合类：ArrayList类，LinkedList类，Vector类（矢量队列），Stack类
 2. Map结构的集合类：HashMap类，Hashtable类
 3. Set结构的集合类：HashSet类，TreeSet类
 4. Queue结构的集合：Queue接口
 
 Java中集合分为value，key-value两种。储存value的有List和Set，储存key-value的是Map。
 
-* List是有序的，可以重复的
-* Set是无序的，不可以重复的。根据equals和hashcode判断，所以存在Set里面的元素，就必须重写equals和hashcode的方法。
-* map是自动根据key排序的，key不能修改，其对应的value可以更改，不允许key重复
+* **List是有序的，可以重复的**
+* **Set是无序的，不可以重复的**。根据equals和hashcode判断，所以存在Set里面的元素，就必须重写equals和hashcode的方法。
+* **Map是自动根据key排序的，key不能修改，其对应的value可以更改，不允许key重复**
 
-### 7. ArrayList和LinkList的区别
+### 7. ArrayList和LinkList以及Vector，Stack的区别
 
-ArrayList底层使用的是数组。LinkList底层使用的是链表。所以前者查询特定索引的元素比较快，后者插入删除快。所以ArrayList使用的是查询比较多的场景，LinkList使用的是插入删除比较多的场景。
+ArrayList底层使用的是数组。LinkList底层使用的是双链表。所以前者查询特定索引的元素比较快，后者插入删除快。所以ArrayList使用的是查询比较多的场景，LinkList使用的是插入删除比较多的场景。Vector底层实现也是数组，具有ArrayList的性质，但是它是线程安全的。Stack（栈）是Vector的一个子类，它实现了一个标准的后进先出的栈。
 
 ### 8. HashMap和HashTable的区别
 
 两者都可以用来存储key-value的数据
 
-​	HashMap可以用null作为key或者value，HashTable不行
+* HashMap可以用null作为key或者value，HashTable不行
+* HashMap是线程不安全的，效率高。
+* HashTable是线程安全的，效率低。
+* ConcurrentHashMap是线程安全的，其内部使用了多个HashMap，同步时给内部正在使用的HashMap加锁
 
-​	HashMap是线程不安全的，效率高。
+### 9. HashSet和TreeSet的区别
 
-​	HashTable是线程安全的，效率低。
+**HashSet**
 
-​	ConcurrentHashMap是线程安全的，其内部使用了多个HashMap，同步时给内部正在使用的HashMap加锁
+* 不能保证元素的排列顺序，顺序有可能发生变化
+* 不是同步的
+* 集合元素可以是null,但只能放入一个null
 
-### 9. 拷贝文件使用字节流还是字符流
+**TreeSet**
+
+​      TreeSet是SortedSet接口的唯一实现类，TreeSet可以确保集合元素处于排序状态。TreeSet支持两种排序方式，自然排序 和定制排序，其中自然排序为默认的排序方式。向TreeSet中加入的应该是同一个类的对象并且实现Comparable接口
+
+### 10. 拷贝文件使用字节流还是字符流
 
 我们拷贝的文件不知包含字符，为了考虑通用性，要使用字节流。
 
-### 10. 线程的实现方式
+### 11. 线程的实现方式
 
 * 通过继承Thread类实现
 * 通过实现Runable接口实现
@@ -88,26 +97,25 @@ thread.start();
 启动后执行run方法。
 ```
 
-### 11. 线程并发库
+### 12. 线程并发库
 
 java通过Executor提供四种静态方法创建四种线程池
 
-* newCachedThreadPool创建可缓存线程池 ，如果长度超过所需，可以自动回收空闲线程，如果不够则创建新的。
+* newCachedThreadPool  创建可缓存线程池 ，如果长度超过所需，可以自动回收空闲线程，如果不够则创建新的。
+
 * **newFixedThreadPool**（常用）创建一个定长线程池，可控制线程最大并发量，超出的线程会在队列中等待
-* newScheduledThreadPool创建一个定长线程池，支持定时以及周期性的执行任务
-* newSingleThreadPool创建一个单线程化的线程池，保证所有线程按照一定顺序（FIFO,UFO，优先级）执行
+
+* newScheduledThreadPool  创建一个定长线程池，支持定时以及周期性的执行任务
+
+* newSingleThreadPool  创建一个单线程化的线程池，保证所有线程按照一定顺序（FIFO,UFO，优先级）执行
 
   作用：
 
-1. 限制线程个数，不会导致由于线程过多导致溢出。
+  1. 限制线程个数，不会导致由于线程过多导致溢出。
+  2. 线程池不用每次需要再去创建或销毁，节约资源
+  3. 不需要每次创建，响应更快
 
-2. 线程池不用每次需要再去创建或销毁，节约资源
-
-3. 不需要每次创建，响应更快
-
-   **连接池也一样**
-
-### 12. 常用的设计模式
+### 13. 常用的设计模式
 
 * 单例模式：
   * 饱汉模式：一开始就创建
@@ -119,13 +127,13 @@ java通过Executor提供四种静态方法创建四种线程池
   * 对象的创建交给一个工厂去创建，自己不用
 * 代理模式：Spring AOP
 
-### 13. forward和redirect
+### 14. forward和redirect
 
 * forward是服务器端跳转，还是原来的请求，链接没有变，效率高
 
 * redirect是客户端的跳转，是重新发起的请求，链接改变，效率低
 
-### 14.session和cookie的区别
+### 15.session和cookie的区别
 
 都是会话跟踪技术。session是服务端记录，cookie是客户端记录，但是session依赖于cookie，sessionID。所以登录信息放在session中，其他信息放在cookie中（购物车的实现可以放在cookie，但是cookie是可以禁用的，所以需要使用cookie+数据库的方式）
 
@@ -145,8 +153,8 @@ java通过Executor提供四种静态方法创建四种线程池
 
 ##### 1.垃圾回收算法
 
-* 标记-清除算法：效率低
-* 复制算法：内存代价高
+* 标记-清除算法：效率低，也可用于老生代
+* 复制算法：内存代价高（用于新生代）
 * 标记-整理算法：好用，用在老生代
 * 分代回收算法：针对不同内存区域使用不同算法
 
@@ -165,9 +173,9 @@ java通过Executor提供四种静态方法创建四种线程池
 
 ##### 1.线程安全
 
-* 互斥同步（阻塞同步，悲观锁）：同步是保证共享数据某一时刻只被一个线程使用。互斥是同步实现的一种的手段。临界区，信号量，互斥量都是实现互斥的主要方式。
-* 非阻塞同步：基于冲突检测的乐观锁。
-* 无同步方案（一个方法不涉及共享数据）：可重入代码，线程本地储存
+* **互斥同步（阻塞同步，悲观锁）**：同步是保证共享数据某一时刻只被一个线程使用。互斥是同步实现的一种的手段。临界区，信号量，互斥量都是实现互斥的主要方式。最基本的互斥同步手段就是synchronized关键字。除了synchronized之外，我们还可以使用java.util.concurrent包中的重入锁（ReentrantLock）来实现同步。不过，相比synchronized，ReentrantLock增加了一些高级功能，主要有以下3项：等待可中断、可实现公平锁，以及锁可以绑定多个条件。
+* **非阻塞同步：基于冲突检测的乐观锁**。由sun.misc.Unsafe类里面的compareAndSwapInt()和compareAndSwapLong()等几个方法包装提供CAS指令，这是虚拟机内部进行特殊处理，一般不允许用户进行调用，实在需要，则需要反射手段或者其他API间接调用。
+* **无同步方案（一个方法不涉及共享数据）**：可重入代码，线程本地储存
 
 ##### 2.锁优化
 
