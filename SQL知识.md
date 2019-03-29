@@ -17,14 +17,14 @@ SQL 支持以下三种注释：
 SELECT *
 FROM mytable; -- 注释
 /* 注释1
-   注释2 */Copy to clipboardErrorCopied
+   注释2 */ 
 ```
 
 数据库创建与使用：
 
 ```sql
 CREATE DATABASE test;
-USE test;Copy to clipboardErrorCopied
+USE test; 
 ```
 
 # 二、创建表
@@ -35,7 +35,7 @@ CREATE TABLE mytable (
   col1 INT NOT NULL DEFAULT 1,
   col2 VARCHAR(45) NULL,
   col3 DATE NULL,
-  PRIMARY KEY (`id`));Copy to clipboardErrorCopied
+  PRIMARY KEY (`id`));
 ```
 
 # 三、修改表
@@ -44,20 +44,20 @@ CREATE TABLE mytable (
 
 ```sql
 ALTER TABLE mytable
-ADD col CHAR(20);Copy to clipboardErrorCopied
+ADD col CHAR(20); 
 ```
 
 删除列
 
 ```sql
 ALTER TABLE mytable
-DROP COLUMN col;Copy to clipboardErrorCopied
+DROP COLUMN col; 
 ```
 
 删除表
 
 ```sql
-DROP TABLE mytable;Copy to clipboardErrorCopied
+DROP TABLE mytable; 
 ```
 
 # 四、插入
@@ -66,7 +66,7 @@ DROP TABLE mytable;Copy to clipboardErrorCopied
 
 ```sql
 INSERT INTO mytable(col1, col2)
-VALUES(val1, val2);Copy to clipboardErrorCopied
+VALUES(val1, val2); 
 ```
 
 插入检索出来的数据
@@ -74,14 +74,14 @@ VALUES(val1, val2);Copy to clipboardErrorCopied
 ```sql
 INSERT INTO mytable1(col1, col2)
 SELECT col1, col2
-FROM mytable2;Copy to clipboardErrorCopied
+FROM mytable2; 
 ```
 
 将一个表的内容插入到一个新表
 
 ```sql
 CREATE TABLE newtable AS
-SELECT * FROM mytable;Copy to clipboardErrorCopied
+SELECT * FROM mytable; 
 ```
 
 # 五、更新
@@ -89,20 +89,20 @@ SELECT * FROM mytable;Copy to clipboardErrorCopied
 ```sql
 UPDATE mytable
 SET col = val
-WHERE id = 1;Copy to clipboardErrorCopied
+WHERE id = 1; 
 ```
 
 # 六、删除
 
 ```sql
 DELETE FROM mytable
-WHERE id = 1;Copy to clipboardErrorCopied
+WHERE id = 1; 
 ```
 
 **TRUNCATE TABLE** 可以清空表，也就是删除所有行。
 
 ```sql
-TRUNCATE TABLE mytable;Copy to clipboardErrorCopied
+TRUNCATE TABLE mytable; 
 ```
 
 使用更新和删除操作时一定要用 WHERE 子句，不然会把整张表的数据都破坏。可以先用 SELECT 语句进行测试，防止错误删除。
@@ -115,7 +115,7 @@ TRUNCATE TABLE mytable;Copy to clipboardErrorCopied
 
 ```sql
 SELECT DISTINCT col1, col2
-FROM mytable;Copy to clipboardErrorCopied
+FROM mytable; 
 ```
 
 ## LIMIT
@@ -127,10 +127,10 @@ FROM mytable;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-LIMIT 5;Copy to clipboardErrorCopied
+LIMIT 5; 
 SELECT *
 FROM mytable
-LIMIT 0, 5;Copy to clipboardErrorCopied
+LIMIT 0, 5;Copy to clipboardErrorCopie 
 ```
 
 返回第 3 ~ 5 行：
@@ -138,7 +138,7 @@ LIMIT 0, 5;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-LIMIT 2, 3;Copy to clipboardErrorCopied
+LIMIT 2, 3; 
 ```
 
 # 八、排序
@@ -151,7 +151,7 @@ LIMIT 2, 3;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-ORDER BY col1 DESC, col2 ASC;Copy to clipboardErrorCopied
+ORDER BY col1 DESC, col2 ASC; 
 ```
 
 # 九、过滤
@@ -161,7 +161,7 @@ ORDER BY col1 DESC, col2 ASC;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-WHERE col IS NULL;Copy to clipboardErrorCopied
+WHERE col IS NULL; 
 ```
 
 下表显示了 WHERE 子句可用的操作符
@@ -198,7 +198,7 @@ WHERE col IS NULL;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-WHERE col LIKE '[^AB]%'; -- 不以 A 和 B 开头的任意文本Copy to clipboardErrorCopied
+WHERE col LIKE '[^AB]%'; -- 不以 A 和 B 开头的任意文本 
 ```
 
 不要滥用通配符，通配符位于开头处匹配会非常慢。
@@ -211,14 +211,14 @@ WHERE col LIKE '[^AB]%'; -- 不以 A 和 B 开头的任意文本Copy to clipboar
 
 ```sql
 SELECT col1 * col2 AS alias
-FROM mytable;Copy to clipboardErrorCopied
+FROM mytable; 
 ```
 
 **CONCAT()** 用于连接两个字段。许多数据库会使用空格把一个值填充为列宽，因此连接的结果会出现一些不必要的空格，使用 **TRIM()** 可以去除首尾空格。
 
 ```sql
 SELECT CONCAT(TRIM(col1), '(', TRIM(col2), ')') AS concat_col
-FROM mytable;Copy to clipboardErrorCopied
+FROM mytable; 
 ```
 
 # 十二、函数
@@ -241,7 +241,7 @@ AVG() 会忽略 NULL 行。
 
 ```sql
 SELECT AVG(DISTINCT col1) AS avg_col
-FROM mytable;Copy to clipboardErrorCopied
+FROM mytable; 
 ```
 
 ## 文本处理
@@ -262,7 +262,7 @@ FROM mytable;Copy to clipboardErrorCopied
 ```sql
 SELECT *
 FROM mytable
-WHERE SOUNDEX(col1) = SOUNDEX('apple')Copy to clipboardErrorCopied
+WHERE SOUNDEX(col1) = SOUNDEX('apple') 
 ```
 
 ## 日期和时间处理
@@ -291,8 +291,8 @@ WHERE SOUNDEX(col1) = SOUNDEX('apple')Copy to clipboardErrorCopied
 | Year()        | 返回一个日期的年份部分         |
 
 ```sql
-mysql> SELECT NOW();Copy to clipboardErrorCopied
-2018-4-14 20:25:11Copy to clipboardErrorCopied
+mysql> SELECT NOW(); 
+2018-4-14 20:25:11 
 ```
 
 ## 数值处理
@@ -320,7 +320,7 @@ mysql> SELECT NOW();Copy to clipboardErrorCopied
 ```sql
 SELECT col, COUNT(*) AS num
 FROM mytable
-GROUP BY col;Copy to clipboardErrorCopied
+GROUP BY col; 
 ```
 
 GROUP BY 自动按分组字段进行排序，ORDER BY 也可以按汇总字段来进行排序。
@@ -329,7 +329,7 @@ GROUP BY 自动按分组字段进行排序，ORDER BY 也可以按汇总字段�
 SELECT col, COUNT(*) AS num
 FROM mytable
 GROUP BY col
-ORDER BY num;Copy to clipboardErrorCopied
+ORDER BY num; 
 ```
 
 WHERE 过滤行，HAVING 过滤分组，行过滤应当先于分组过滤。
@@ -339,7 +339,7 @@ SELECT col, COUNT(*) AS num
 FROM mytable
 WHERE col > 2
 GROUP BY col
-HAVING num >= 2;Copy to clipboardErrorCopied
+HAVING num >= 2; 
 ```
 
 分组规定：
@@ -359,7 +359,7 @@ HAVING num >= 2;Copy to clipboardErrorCopied
 SELECT *
 FROM mytable1
 WHERE col1 IN (SELECT col2
-               FROM mytable2);Copy to clipboardErrorCopied
+               FROM mytable2); 
 ```
 
 下面的语句可以检索出客户的订单数量，子查询语句会对第一个查询检索出的每个客户执行一次：
@@ -370,7 +370,7 @@ SELECT cust_name, (SELECT COUNT(*)
                    WHERE Orders.cust_id = Customers.cust_id)
                    AS orders_num
 FROM Customers
-ORDER BY cust_name;Copy to clipboardErrorCopied
+ORDER BY cust_name; 
 ```
 
 # 十五、连接
@@ -388,7 +388,7 @@ ORDER BY cust_name;Copy to clipboardErrorCopied
 ```sql
 SELECT A.value, B.value
 FROM tablea AS A INNER JOIN tableb AS B
-ON A.key = B.key;Copy to clipboardErrorCopied
+ON A.key = B.key; 
 ```
 
 可以不明确使用 INNER JOIN，而使用普通查询并在 WHERE 中将两个表中要连接的列用等值方法连接起来。
@@ -396,7 +396,7 @@ ON A.key = B.key;Copy to clipboardErrorCopied
 ```sql
 SELECT A.value, B.value
 FROM tablea AS A, tableb AS B
-WHERE A.key = B.key;Copy to clipboardErrorCopied
+WHERE A.key = B.key; 
 ```
 
 在没有条件语句的情况下返回笛卡尔积。
@@ -415,7 +415,7 @@ FROM employee
 WHERE department = (
       SELECT department
       FROM employee
-      WHERE name = "Jim");Copy to clipboardErrorCopied
+      WHERE name = "Jim"); 
 ```
 
 自连接版本
@@ -424,7 +424,7 @@ WHERE department = (
 SELECT e1.name
 FROM employee AS e1 INNER JOIN employee AS e2
 ON e1.department = e2.department
-      AND e2.name = "Jim";Copy to clipboardErrorCopied
+      AND e2.name = "Jim"; 
 ```
 
 ## 自然连接
@@ -435,7 +435,7 @@ ON e1.department = e2.department
 
 ```sql
 SELECT A.value, B.value
-FROM tablea AS A NATURAL JOIN tableb AS B;Copy to clipboardErrorCopied
+FROM tablea AS A NATURAL JOIN tableb AS B; 
 ```
 
 ## 外连接
@@ -447,7 +447,7 @@ FROM tablea AS A NATURAL JOIN tableb AS B;Copy to clipboardErrorCopied
 ```sql
 SELECT Customers.cust_id, Orders.order_num
 FROM Customers LEFT OUTER JOIN Orders
-ON Customers.cust_id = Orders.cust_id;Copy to clipboardErrorCopied
+ON Customers.cust_id = Orders.cust_id; 
 ```
 
 customers 表：
@@ -494,7 +494,7 @@ WHERE col = 1
 UNION
 SELECT col
 FROM mytable
-WHERE col =2;Copy to clipboardErrorCopied
+WHERE col =2; 
 ```
 
 # 十七、视图
@@ -514,7 +514,7 @@ WHERE col =2;Copy to clipboardErrorCopied
 CREATE VIEW myview AS
 SELECT Concat(col1, col2) AS concat_col, col3*col4 AS compute_col
 FROM mytable
-WHERE col5 = val;Copy to clipboardErrorCopied
+WHERE col5 = val; 
 ```
 
 # 十八、存储过程
@@ -547,9 +547,9 @@ create procedure myprocedure( out ret int )
         select y*y into ret;
     end //
 
-delimiter ;Copy to clipboardErrorCopied
+delimiter ; 
 call myprocedure(@ret);
-select @ret;Copy to clipboardErrorCopied
+select @ret; 
 ```
 
 # 十九、游标
@@ -585,7 +585,7 @@ create procedure myprocedure(out ret int)
 
         close mycursor;
     end //
- delimiter ;Copy to clipboardErrorCopied
+ delimiter ; 
 ```
 
 # 二十、触发器
@@ -600,7 +600,7 @@ INSERT 触发器包含一个名为 NEW 的虚拟表。
 CREATE TRIGGER mytrigger AFTER INSERT ON mytable
 FOR EACH ROW SELECT NEW.col into @result;
 
-SELECT @result; -- 获取结果Copy to clipboardErrorCopied
+SELECT @result; -- 获取结果 
 ```
 
 DELETE 触发器包含一个名为 OLD 的虚拟表，并且是只读的。
@@ -633,7 +633,7 @@ SAVEPOINT delete1
 // ...
 ROLLBACK TO delete1
 // ...
-COMMITCopy to clipboardErrorCopied
+COMMIT 
 ```
 
 # 二十二、字符集
@@ -649,7 +649,7 @@ COMMITCopy to clipboardErrorCopied
 ```sql
 CREATE TABLE mytable
 (col VARCHAR(10) CHARACTER SET latin COLLATE latin1_general_ci )
-DEFAULT CHARACTER SET hebrew COLLATE hebrew_general_ci;Copy to clipboardErrorCopied
+DEFAULT CHARACTER SET hebrew COLLATE hebrew_general_ci; 
 ```
 
 可以在排序、分组时指定校对：
@@ -657,7 +657,7 @@ DEFAULT CHARACTER SET hebrew COLLATE hebrew_general_ci;Copy to clipboardErrorCop
 ```sql
 SELECT *
 FROM mytable
-ORDER BY col COLLATE latin1_general_ci;Copy to clipboardErrorCopied
+ORDER BY col COLLATE latin1_general_ci; 
 ```
 
 # 二十三、权限管理
@@ -666,7 +666,7 @@ MySQL 的账户信息保存在 mysql 这个数据库中。
 
 ```sql
 USE mysql;
-SELECT user FROM user;Copy to clipboardErrorCopied
+SELECT user FROM user; 
 ```
 
 **创建账户**
@@ -674,25 +674,25 @@ SELECT user FROM user;Copy to clipboardErrorCopied
 新创建的账户没有任何权限。
 
 ```sql
-CREATE USER myuser IDENTIFIED BY 'mypassword';Copy to clipboardErrorCopied
+CREATE USER myuser IDENTIFIED BY 'mypassword'; 
 ```
 
 **修改账户名**
 
 ```sql
-RENAME myuser TO newuser;Copy to clipboardErrorCopied
+RENAME myuser TO newuser; 
 ```
 
 **删除账户**
 
 ```sql
-DROP USER myuser;Copy to clipboardErrorCopied
+DROP USER myuser; 
 ```
 
 **查看权限**
 
 ```sql
-SHOW GRANTS FOR myuser;Copy to clipboardErrorCopied
+SHOW GRANTS FOR myuser; 
 ```
 
 **授予权限**
@@ -700,7 +700,7 @@ SHOW GRANTS FOR myuser;Copy to clipboardErrorCopied
 账户用 username@host 的形式定义，username@% 使用的是默认主机名。
 
 ```sql
-GRANT SELECT, INSERT ON mydatabase.* TO myuser;Copy to clipboardErrorCopied
+GRANT SELECT, INSERT ON mydatabase.* TO myuser; 
 ```
 
 **删除权限**
@@ -714,7 +714,7 @@ GRANT 和 REVOKE 可在几个层次上控制访问权限：
 - 特定的存储过程。
 
 ```sql
-REVOKE SELECT, INSERT ON mydatabase.* FROM myuser;Copy to clipboardErrorCopied
+REVOKE SELECT, INSERT ON mydatabase.* FROM myuser; 
 ```
 
 **更改密码**
@@ -722,5 +722,5 @@ REVOKE SELECT, INSERT ON mydatabase.* FROM myuser;Copy to clipboardErrorCopied
 必须使用 Password() 函数
 
 ```sql
-SET PASSWROD FOR myuser = Password('new_password');Copy to clipboardErrorCopied
+SET PASSWROD FOR myuser = Password('new_password'); 
 ```

@@ -33,7 +33,7 @@ String是不可变的字符串 ，底层使用了不可变的数组(final char[]
 
 String str="123"是在常量池中保存，根据字面量如果两个str相同，这两个就都指向同一个引用。而String str=new String("123")是在堆中新建的对象，每一次生成地址都是不同的。
 
-拼接字符串：String的直接`+` 会创建三个对象，所以使用其他两个效率更高(append方法)。但是如果在处理String +的时候，JVM会进行优化，实际上是也会new String这样然后使用append()方法。
+拼接字符串：String的直接 `+` 会创建三个对象，所以使用其他两个效率更高(append方法)。但是如果在处理String + 的时候，JVM会进行优化，实际上是也会new String这样然后使用append()方法。
 
 StringBuilder是线程不安全的，效率高，StringBuffer是线程安全的，效率低
 
@@ -48,7 +48,7 @@ StringBuilder是线程不安全的，效率高，StringBuffer是线程安全的�
 
 Java中集合分为value，key-value两种。储存value的有List和Set，储存key-value的是Map。
 
-* **List是有序的，可以重复的**
+* **List是有序的，可以重复的**。（这里有序是指插入和读取的顺序是否一致）
 * **Set是无序的，不可以重复的**。根据equals和hashcode判断，所以存在Set里面的元素，就必须重写equals和hashcode的方法。
 * **Map是自动根据key排序的，key不能修改，其对应的value可以更改，不允许key重复**
 
