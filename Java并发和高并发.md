@@ -1,4 +1,4 @@
-# 线程安全概念
+# 线程安全性
 
 不管何种调度方式，不需要额外的同步或者协同，都能表现正确的行为
 
@@ -6,18 +6,18 @@
 * 可见性：一个线程对主存的修改能及时被其他线程观察
 * 有序性：尽管所有线程执行顺序改变，单个线程的执行顺序不会改变
 
-# 原子性
+## 原子性
 
-## Atomic包
+### Atomic包
 
 AtomicXXX方法使用了Unsafe类的CompareAndSwap方法，就是常说的CAS，此方法将内存中的值读取，和预期的值比较，如果相等则允许更新，不相等则循环再取。
 
-## 锁
+### 锁
 
 * synchronized：依赖于JVM
 * Lock：依赖特殊的CPU指令，代码实现-ReentrantLock
 
-### synchronized
+#### synchronized
 
 * 修饰代码块：大括号括起来的，作用于实例对象
 * 修饰方法：整个方法，作用于该类的实例对象
@@ -96,13 +96,13 @@ public class SynchronizedExample2 {
 }
 ```
 
-### 对比
+#### 对比
 
 * synchronized：不可中断，适合竞争激烈，可读性好
 * Lock：可中断锁，多样化同步，竞争激烈时维持常态
 * Atomic：竞争激烈时能维持常态，比Lock性能更好。但是一次只能同步一个值
 
-# 可见性
+## 可见性
 
 导致不可见的原因：
 
@@ -110,12 +110,12 @@ public class SynchronizedExample2 {
 * 重排序结合线程交叉执行
 * 共享变量更新后的值没有在工作内存与主存间及时更新
 
-## synchronized
+### synchronized
 
 * 线程解锁前必须把共享变量的最新值刷新回到主存
 * 线程加锁时，将清空工作内存中共享变量的值，重新从主存中读取最新值
 
-## volatile
+### volatile
 
 通过加入<a style="color:red;">内存屏障</a>和<a style="color:red;">禁止重排序</a>优化来实现
 
@@ -137,11 +137,11 @@ while(!inited){
 doSomething;
 ```
 
-# 有序性
+## 有序性
 
 如果两个线程的操作顺序无法从happen-before规则推导出来，就不能保证有序性，虚拟机可以随意进行重排序
 
-## happen-before规则
+### happen-before规则
 
 * 程序次序规则：一个线程内，按照书写顺序执行
 * 锁定规则：一个unlock操作先行发生于后面同一个锁的lock操作
@@ -151,3 +151,109 @@ doSomething;
 * 线程中断规则：对于线程interrupt()方法的调用 先行发生于 被中断线程的代码 检测到中断事件的发生
 * 线程终结规则：线程中所有操作都先行发生于线程的终止检测
 * 对象终结规则：一个对象的初始化完成先行发生于它的finalize()方法的开始
+
+# 安全发布对象
+
+* 发布对象：使一个对象能够被当前范围之外的代码所使用
+* 对象逸出：一种错误发布。当对象还没有构造完就被其他线程可见
+
+## 安全发布对象的四种方法
+
+### 1.在静态初始化函数中初始化一个对象的引用
+
+### 2.将对象的引用保存到volatile类型域或者AtomicRerence对象中
+
+### 3.将对象的引用保存到某个正确的够着对象的final类型域中
+
+### 4.将对象的引用保存到一个由锁保护的域中
+
+# 不可变对象
+
+* 不可变对象需要满足的条件
+  * 创建后其状态不可修改
+  * 对象所有域都是final类型
+  * 对象是正确创建的（在创建之前，this引用没有逸出）
+
+## final关键字：
+
+* 修饰类：不能被继承-参考String类型
+* 修饰方法：锁定不被继承修改。一个类的private会被隐式显示为final
+* 修饰变量：基本类型：初始化之后不能修改；引用类型：初始化之后不能指向另外一个对象
+
+```Java
+private final static Integer a = 1;
+    private final static String b = "2";
+    private final static Map<Integer, Integer> map = Maps.newHashMap();
+    static {
+        map.put(1, 2);
+        map.put(2, 3);
+        map.put(4, 5);
+    }
+
+    public static void main(String[] args) {
+        //a=2;
+        //b="2";
+        //map=newHashMap();
+        map.put(1, 3);
+        log.info("{}", map.get(1));//尽管map引用不可变，但是里面的值可以
+    }
+```
+
+
+
+## Collections.unmodifiableXXX
+
+对应的有Collection，List，Set，Map等，只要将这些传入，即可不能被修改。
+
+```Java
+static {
+        map.put(1, 2);
+        map.put(2, 3);
+        map.put(4, 5);
+        map = Collections.unmodifiableMap(map);
+    }
+
+    public static void main(String[] args) {
+        map.put(1, 3);  //抛出异常，不能让值被更改
+        log.info("{}", map.get(1));
+    }
+```
+
+
+
+## Guava：ImmutableXXX
+
+对应的有Collection，List，Set，Map等，都带有初始化方法
+
+```Java
+ private final static ImmutableList<Integer> list = ImmutableList.of(1, 2, 3);
+    private final static ImmutableSet set = ImmutableSet.copyOf(list);
+    private final static ImmutableMap<Integer, Integer> map = ImmutableMap.of(1, 2, 3, 4);
+    private final static ImmutableMap<Integer, Integer> map2 = ImmutableMap.<Integer,Integer>builder()
+            .put(1, 2)
+            .put(3, 4)
+            .build();
+```
+
+
+
+# 线程封闭
+
+将对象封闭到一个线程里
+
+## 堆栈封闭
+
+局部变量，无并发问题
+
+## ThreadLocal线程封闭
+
+特别好的封闭方法。内部使用Map，key是线程名称，value是需要封闭的对象。
+
+# 线程不安全的类
+
+线程不安全------->线程安全
+
+* StringBuilder -----> StringBuffer（内部由synchronized关键字修饰）
+* SimpleDataFormat ----> JodaTime
+* ArrayList , HashSet , HashMap等Collections
+
