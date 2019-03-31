@@ -15,7 +15,8 @@ AtomicXXX方法使用了Unsafe类的CompareAndSwap方法，就是常说的CAS，
 ### 锁
 
 * synchronized：依赖于JVM
-* Lock：依赖特殊的CPU指令，代码实现-ReentrantLock
+* Lock：依赖特殊的CPU指令
+  * ReentrantLock--java代码实现
 
 #### synchronized
 
@@ -293,3 +294,173 @@ static {
 * 共享只读：在没有额外同步的情况下，可以被多线程访问，但不允许修改
 * 线程安全对象：在内部通过同步机制保证线程安全，所以其他线程无需额外的同步就可以通过公共接口访问它。
 * 被守护对象：只能通过获得特定的锁来访问。
+
+# J.U.C--AQS（AbstractQueuedSynchronizer）
+
+* 基于Node实现的FIFO队列，可以用来构建锁和其他同步控件的基础框架
+* 利用一个int类型表示状态
+* 使用方法是继承
+* 子类通过继承并通过实现它的方法管理其状态的方法操纵状态
+* 可以同时实现排它锁和共享锁模式（独占，共享）
+
+## AQS同步组件
+
+### CountDownLatch
+
+使用计数器进行初始化，该计数器是原子性操作，同一时刻只有一个线程能执行操作。调用该类的`await()`方法的线程一直处于阻塞状态，直到其他线程调用`countDown()`使计数器的值为0时，所有调用`await()`方法 的线程会继续执行。这个计数器不能直接重置为0，如果要这样也可以自己实现。
+
+```Java
+@Slf4j
+public class CountDownLacth {
+    private static int threadCount = 200;
+    public static void main(String[] args) throws InterruptedException {
+        ExecutorService exec = Executors.newCachedThreadPool();
+        final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            final int threadNum = i;
+            exec.execute(()->{
+                try {
+                    test(threadNum);
+                } catch (InterruptedException e) {
+                    log.info("{}", e);
+                }finally {
+                    countDownLatch.countDown();//每一次完成之后都要减一
+                }
+            });
+        }
+        //countDownLatch.await(10,TimeUnit.MILLISECONDS); //传入参数等待10ms之后没有完成也不再等了
+        countDownLatch.await(); //调用await，要等待所有之前的线程完成后完成
+        log.info("finish");
+        exec.shutdown();//关闭线程池
+    }
+
+    private static void test(int threadNum) throws InterruptedException {
+        Thread.sleep(100);
+        log.info("{}", threadNum);
+        Thread.sleep(100);
+
+    }
+}
+```
+
+
+
+### Semaphore
+
+```Java
+@Slf4j
+public class SemaphoreExample1 {
+    private static int threadCount = 200;
+    public static void main(String[] args) throws InterruptedException {
+
+        ExecutorService exec = Executors.newCachedThreadPool();
+
+        final Semaphore semaphore = new Semaphore(10); //当前有多少个许可
+
+        for (int i = 0; i < threadCount; i++) {
+            final int threadNum = i;
+            exec.execute(()->{
+                try {
+
+                    semaphore.acquire(); //获取许可。可以选择参数，一次性拿走多少个许可
+                    test(threadNum);
+                    semaphore.release(); //释放许可
+
+                } catch (InterruptedException e) {
+                    log.info("{}", e);
+                }
+            });
+        }
+        exec.shutdown();
+    }
+
+    private static void test(int threadNum) throws InterruptedException {
+        log.info("{}", threadNum);
+        Thread.sleep(1000);
+
+    }
+}
+```
+
+
+
+### CyclicBarrier
+
+允许一组线程相互等待，直到某个公共等待点。线程调用`await()`时计数加一并且进入等待，一直到特定计数时候，所有线程可以继续执行。计数器可以进行重置，进行重复使用。
+
+```Java
+@Slf4j
+public class CyclicBarrierExample1 {
+    private static CyclicBarrier barrier = new CyclicBarrier(5);//设定计数器为5
+
+    public static void main(String[] args) throws InterruptedException {
+
+        ExecutorService exec = Executors.newCachedThreadPool();
+
+        for (int i = 0; i < 10; i++) {
+            final int threadNum = i;
+            Thread.sleep(1000);
+            exec.execute(()->{
+                try {
+                    rece(threadNum);
+                } catch (Exception e) {
+                    log.error("except", e);
+                }
+            });
+        }
+        exec.shutdown();
+    }
+
+    private static void rece(int threadNum) throws Exception {
+        Thread.sleep(1000);
+        log.info("{} is ready", threadNum);
+        barrier.await(); //加计数器,可以加入参数，表示等待时间
+        log.info("{} is continue",threadNum);
+    }
+}
+```
+
+
+
+### ReentrantLock
+
+可重入锁。
+
+* 和synchronized的区别
+
+  * 可重入性：区别不大
+  * 锁的实现：sync基于JVM实现，Reen是JDK实现的。
+  * 性能区别：sync引入了轻量锁，自旋锁和偏向锁后，性能和Reen差不多了。官方建议使用sync
+  * 功能区别：sync方便一些。reen需要手动释放锁，所以最好在finally里面写。reen锁的灵活度比sync好
+
+* ReentrantLock独有功能
+
+  * 可指定公平锁和非公平锁
+  * 提供一个Condition类，可以分组唤醒需要唤醒的线程
+  * 提供能够中断等待锁线程的机制。lock.lockInterruptibly()
+
+  **ReentrantLock使用一种自旋锁，循环调用CAS操作加锁，避免线程进入内核态的阻塞状态**
+
+### Condition
+
+
+
+### FutureTask
+
+# 线程池-ThreadPoolExecutor
+
+Thread类：不好控制，所以使用线程池
+
+使用线程池的好处：
+
+* 重用存在的线程，减少系统开销
+* 有效控制并发，提高资源利用率
+* 提供定期执行，定时执行，单线程和并发等控制
+
+参数：
+
+* corePoolSize：核心线程数量
+* maximunPoolSize：线程最大线程数
+* workQueue：阻塞队列，储存等待执行的任务。
+
+关系：如果运行的线程数小于corePoolSize，直接创建新线程处理任务，尽管线程池中有空闲线程。如果线程池中的数量大于等于corePoolSize但是小于maximunPoolSize，只有workQueue满了才创建新线程处理任务。如果corePoolSize和maximunPoolSize相同，则线程池大小固定，如果workQueue没有满，则将任务放入。如果workQueue已满，则使用拒绝策略去处理任务。
