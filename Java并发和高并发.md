@@ -249,11 +249,47 @@ static {
 
 特别好的封闭方法。内部使用Map，key是线程名称，value是需要封闭的对象。
 
-# 线程不安全的类
+# 线程不安全的类或写法
 
 线程不安全------->线程安全
 
 * StringBuilder -----> StringBuffer（内部由synchronized关键字修饰）
 * SimpleDataFormat ----> JodaTime
 * ArrayList , HashSet , HashMap等Collections
+* 先检查再执行：`if(condition(a)){handle(a);}`
 
+# 线程安全--同步容器
+
+* ArrayList->Vector, Stack
+* HashMap->HashTable(key,value不能为null)
+* Collections.synchronizedXXX(List, set, Map)
+
+编写代码时需要注意的：
+
+1. 在使用同步容器的时候，也会出现线程不安全的情况（比如两个线程分别对Vector实行get和remove操作，有可能会出现get的时候数组越界，因为get的索引从vector的size获取，可能size被读取之后紧接着发生remove，导致数据不一致）。写的时候一定要注意
+2. 在使用foreach和iterator的时候，不要做数据的更新删除操作，需要记录下来之后再处理。for循环可以。多线程下解决解决办法：使用同步关键字进行同步，同时还可以使用同步容器和其他相关的并发容器。
+
+# 线程安全--并发容器J.U.C
+
+在java.util.concurrent包下的类
+
+* ArrayList ----> CopyOnWriteArrayList 
+
+  思想：1. 读写分离；2.最终一致性；3.使用时另外开辟空间解决并发冲突
+
+* HashSet, TreeSet -----> CopyOnWriteArraySet,  ConcurrentSkipListSet
+
+  ConcurrentSkipListSet：支持自然排序的，基于Map集合，多线程线程安全，但是批量操作不能保证原子性，只能保证每一次操作时是原子性的。不允许null。
+
+* HashMap, TreeMap  ---->  ConcurrentHashMap,  ConcurrentSkipListMap
+
+  ConcurrentHashMap：不允许null。针对读操作做了大量优化。
+
+  ConcurrentSkipListMap：内部使用跳表实现。key是有序的，支持更高的并发。
+
+# 安全共享对象的策略--总结
+
+* 线程限制：由线程独占并且只能被此线程修改
+* 共享只读：在没有额外同步的情况下，可以被多线程访问，但不允许修改
+* 线程安全对象：在内部通过同步机制保证线程安全，所以其他线程无需额外的同步就可以通过公共接口访问它。
+* 被守护对象：只能通过获得特定的锁来访问。
