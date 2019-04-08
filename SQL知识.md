@@ -1,5 +1,3 @@
-### 参考来自：https://cyc2018.github.io/CS-Notes/#/notes/SQL
-
 # 一、基础
 
 模式定义了数据如何存储、存储什么样的数据以及数据如何分解等信息，数据库和表都有模式。
@@ -130,7 +128,7 @@ FROM mytable
 LIMIT 5; 
 SELECT *
 FROM mytable
-LIMIT 0, 5;Copy to clipboardErrorCopie 
+LIMIT 0, 5; 
 ```
 
 返回第 3 ~ 5 行：

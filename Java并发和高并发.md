@@ -10,7 +10,7 @@
 
 ### Atomic包
 
-AtomicXXX方法使用了Unsafe类的CompareAndSwap方法，就是常说的CAS，此方法将内存中的值读取，和预期的值比较，如果相等则允许更新，不相等则循环再取。
+AtomicXXX方法使用了Unsafe类的CompareAndSet方法，就是常说的CAS，此方法将内存中的值读取，和预期的值比较，如果相等则允许更新，不相等则循环再取。
 
 ### 锁
 
@@ -238,7 +238,7 @@ static {
 
 
 
-# 线程封闭
+# 线程安全手段
 
 将对象封闭到一个线程里
 
@@ -270,7 +270,7 @@ static {
 1. 在使用同步容器的时候，也会出现线程不安全的情况（比如两个线程分别对Vector实行get和remove操作，有可能会出现get的时候数组越界，因为get的索引从vector的size获取，可能size被读取之后紧接着发生remove，导致数据不一致）。写的时候一定要注意
 2. 在使用foreach和iterator的时候，不要做数据的更新删除操作，需要记录下来之后再处理。for循环可以。多线程下解决解决办法：使用同步关键字进行同步，同时还可以使用同步容器和其他相关的并发容器。
 
-# 线程安全--并发容器J.U.C
+# 线程安全--并发集合J.U.C
 
 在java.util.concurrent包下的类
 
@@ -447,6 +447,8 @@ public class CyclicBarrierExample1 {
 
 ### FutureTask
 
+
+
 # 线程池-ThreadPoolExecutor
 
 Thread类：不好控制，所以使用线程池
@@ -464,3 +466,34 @@ Thread类：不好控制，所以使用线程池
 * workQueue：阻塞队列，储存等待执行的任务。
 
 关系：如果运行的线程数小于corePoolSize，直接创建新线程处理任务，尽管线程池中有空闲线程。如果线程池中的数量大于等于corePoolSize但是小于maximunPoolSize，只有workQueue满了才创建新线程处理任务。如果corePoolSize和maximunPoolSize相同，则线程池大小固定，如果workQueue没有满，则将任务放入。如果workQueue已满，则使用拒绝策略去处理任务。
+
+# 死锁
+
+四个条件：
+
+* 互斥条件
+* 请求和保持条件
+* 不剥夺条件
+* 环路等待条件
+
+避免死锁：
+
+* 加锁顺序：代码加锁的顺序
+* 加锁时间：使用ReentrantLock
+* 死锁检测：检测到了就回退，设置随机线程优先级
+
+# 多线程并发的最佳实践
+
+* 使用本地变量
+* 使用不可变类
+* 最小化锁的作用域范围：S=1/(1-a+a/n)  a是并行比例，n是并行处理节点个数
+* 使用线程池的Executor，而不是直接使用new Thread
+* 宁可使用同步也不要使用线程的wait和notify
+* 使用BlockingQueue实现生产-消费模式
+* 使用并发集合而不是加了锁的同步结合
+* 使用Semaphore创建有界的访问
+* 宁可使用同步代码块，也不使用同步方法
+* 避免使用静态变量
+
+# =========================================
+
